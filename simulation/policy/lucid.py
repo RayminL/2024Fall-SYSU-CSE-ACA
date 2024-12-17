@@ -20,15 +20,18 @@ class Lucid(Policy):
         self.obtain_cluster_prediction()
 
     def enable_colocate(self):
+        # 是否启动任务绑定
         self._vc.colocate_enable = 1
 
     def obtain_workload_estimates(self):
+        # 获取工作负载的估计信息
         estimate = self.estimator.data
         for job in self.trace.job_list:
             if job["toskip"] == 0:
                 job["priority"] = estimate[estimate["job_id"] == job["job_id"]]["priority"].iloc[0] * job["gpu_num"]
 
     def obtain_colocate_analysis(self):
+        # 获取任务共置分析信息
         self.get_colocate_data()
         df = self.colo_df
         for job in self.trace.job_list:
@@ -38,6 +41,7 @@ class Lucid(Policy):
                 job["sharescore"] = info["label"].values[0]
 
     def obtain_cluster_prediction(self):
+        # 获取集群的预测信息
         cluster = self.estimator.cluster_name
         self.get_time_series_data(cluster)
         if cluster == "Venus":
@@ -131,6 +135,8 @@ class Lucid(Policy):
                     job["status"] = "end"
                     job["end_time"] = self.time
                     self.end_job_num += 1
+                    
+                    # * Affine-jobpair Binder
                     if self._vc.colocate_enable and job["exclusive"] == 0:
                         colo_job_id = self._vc.check_vc_colocate_jobs(job)
                         if colo_job_id:

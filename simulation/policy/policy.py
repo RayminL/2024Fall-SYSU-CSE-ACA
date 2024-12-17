@@ -81,14 +81,15 @@ class Policy:
             self.vc_echo_scaling = True
 
     def check_future_cluster_throughput(self):
-        if len(self.time_df) == 0:
-            return 10
-        else:
-            self.time_df = self.time_df[self.time_df["time"] > self.time]
-            if len(self.time_df) >= 6:
-                return self.time_df.head()["pred_gpu_job"].mean()
-            else:
-                return self.time_df["pred_gpu_job"].mean()
+        # if len(self.time_df) == 0:
+        #     return 10
+        # else:
+        #     self.time_df = self.time_df[self.time_df["time"] > self.time]
+        #     if len(self.time_df) >= 6:
+        #         return self.time_df.head()["pred_gpu_job"].mean()
+        #     else:
+        #         return self.time_df["pred_gpu_job"].mean()
+        return 1
 
     def ckpt_overhead(self, job):
         """Preemption Overhead Note

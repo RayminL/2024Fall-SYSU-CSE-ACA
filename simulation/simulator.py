@@ -15,12 +15,14 @@ os.environ["NUMEXPR_MAX_THREADS"] = str(os.cpu_count())
 def main(args):
     code_start = time.perf_counter()
 
+    # 1. 日志设置
     """Logger Setting"""
     log_dir = f"{args.log_dir}/{args.experiment_name}"
     if not os.path.exists(log_dir):
         os.makedirs(log_dir + "/logfile")
     logger = utils.logger_init(file=f"{log_dir}/logfile/{args.scheduler}_{args.placer}")
 
+    # 2. 基础设施和任务跟踪初始化
     """Infrastructure & Trace Initialization"""
     vc_df = pd.read_csv(args.trace_dir + "/vc_config.csv", index_col=0)
     vc_dict = vc_df.to_dict()["num"]
@@ -31,6 +33,7 @@ def main(args):
 
     trace = utils.trace_parser(trace_df)
 
+    # 3. 性能分析配置
     if args.scheduler in utils.PROFILER_ENABLED_SCHEDULERS and not args.sweep:
         if args.profiler_auto:
             vc_dict, prof_scale, prof_time, prof_factor = utils.profiler_config(args.experiment_name, vc_dict)
